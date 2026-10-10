@@ -1,0 +1,204 @@
+//A esta programacion solo le hace falta calibrar la distancia de los sensores Y tiempo de motores. Rsta programacion esta bastante reducida
+//Los motores van a ser asi, izquierda M1 y derecha M2, viendo la aspiradora de lado ATRAS.
+//ESTA PROGRAMACION ES LA FINAL, YA QUE TIENE TODAS LAS FUNCIONES YA LISTAS.
+int TRIG =3, ECHO =4; //SENSOR 1
+int TRIG1 =5, ECHO1 =6;//SENSOR 2
+int TRIG2 =7, ECHO2 =8;//SENSOR 3
+int M1 =9, M1R =10, M2 =2, M2R =13; //MOTORES
+int HUMO =A0, LUZ =11, AIRE =12;//fUNCIONES ADICIONALES, SE DESCARTO FUEGO, NO TOCAS Y LUCES INDIVUDALES
+char estado =0; //PARA EL BLUTU
+long duracion, duracion1, duracion2; //HACES OPERACION MATEMATICA DE SENSROES
+float distancia, distancia1, distancia2;//TAMBIEN PARA LA FUNCION MATEMATICA DE LOS SENSORES
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(TRIG, OUTPUT); pinMode(ECHO, INPUT);
+  pinMode(TRIG1, OUTPUT); pinMode(ECHO1, INPUT);
+  pinMode(TRIG2, OUTPUT); pinMode(ECHO2, INPUT);
+  pinMode(M1, OUTPUT); pinMode(M1R, OUTPUT);
+  pinMode(M2, OUTPUT);  pinMode(M2R, OUTPUT);
+  pinMode(HUMO, OUTPUT); pinMode(LUZ, OUTPUT); 
+  pinMode(AIRE, OUTPUT);}
+
+void loop() {
+if (Serial.available()>0){
+  estado = Serial.read();}
+
+switch(estado){
+
+ case 'J':         //FUNCION AUTONOMA
+ digitalWrite(AIRE, HIGH);
+  
+  // Limpiar TRIG
+  //SENSOR 1
+  digitalWrite(TRIG, LOW);
+  delayMicroseconds(2);
+  
+ digitalWrite(TRIG, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG, LOW);
+
+  // Leer tiempo del eco
+  duracion = pulseIn(ECHO, HIGH);
+ // Calcular distancia en cm
+  distancia = duracion * 0.034 / 2;
+  delay(50);
+  
+  //SENSOR 2
+  digitalWrite(TRIG1, LOW);
+  delayMicroseconds(2);
+
+digitalWrite(TRIG1, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG1, LOW);
+
+  // Leer tiempo del eco
+  duracion1 = pulseIn(ECHO1, HIGH);
+ // Calcular distancia en cm
+  distancia1 = duracion1 * 0.034 / 2;
+  delay(50);
+  
+  //SENSOR 3
+  digitalWrite(TRIG2, LOW);
+  delayMicroseconds(2);
+
+digitalWrite(TRIG2, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG2, LOW);
+
+ // Leer tiempo del eco
+  duracion2 = pulseIn(ECHO2, HIGH);
+
+  // Calcular distancia en cm
+  distancia2 = duracion2 * 0.034 / 2;
+  delay(50);
+
+
+  Serial.print("Distancia0: ");
+  Serial.print(distancia);
+  Serial.println(" cm");
+Serial.println(" ");
+  Serial.print("Distancia1: ");
+  Serial.print(distancia1);
+  Serial.println(" cm");
+Serial.println(" ");
+  Serial.print("Distancia2: ");
+  Serial.print(distancia2);
+  Serial.println(" cm");
+Serial.println(" ");
+
+  delay(500);
+  
+//SENSOR 1
+if(distancia<=10){
+PARAR();
+delay(1000);
+RETROCEDER();
+delay(2000);
+DERECHA();
+delay(2000);
+AVANZAR();}
+
+else{
+AVANZAR();}
+
+//SENSOR 2
+
+if(distancia1<=15){
+PARAR();
+delay(1000);
+RETROCEDER();
+delay(2000);
+IZQUIERDA();
+delay(2000);
+AVANZAR();}
+
+else{
+AVANZAR();}
+
+//SENSOR 3
+
+if(distancia2<=10){
+PARAR();
+delay(1000);
+RETROCEDER();
+delay(2000);
+IZQUIERDA();
+delay(2000);
+AVANZAR();}
+
+else{
+AVANZAR();} 
+break;
+
+case 'K':         //STOP TOTAL A TODO
+Serial.println("STOP"); digitalWrite(M1, LOW); 
+digitalWrite(M2, LOW); digitalWrite(M2R, LOW);
+digitalWrite(M1R, LOW); digitalWrite(AIRE, LOW);
+break;
+
+case 'A':              //INCIO DE PROGRAMACION MANUAL
+    AVANZAR(); 
+break;
+
+case 'a':
+   PARAR();
+break;
+
+case 'B':        
+ RETROCEDER();
+break;
+
+case 'b':        
+ PARAR(); 
+ break;
+
+  case 'C':        
+DERECHA();
+break;
+
+case 'c':        
+ PARAR();
+ break;
+
+case 'D':        
+  IZQUIERDA();
+break;
+
+case 'd':        
+  PARAR();
+break;
+//    FUEGO
+
+  //Se elimino la funcion FUEGO!
+
+  case 'F': digitalWrite(AIRE, HIGH);  break;
+  case 'f': digitalWrite(AIRE, LOW); break;
+
+  case 'G': digitalWrite(HUMO, HIGH); break;
+  case 'g': digitalWrite(HUMO, LOW); break;
+
+  case 'H': digitalWrite(LUZ, HIGH); break;
+  //Se elimino funcion individual, luz atras luz adelante
+  case 'I': digitalWrite(LUZ, LOW); break;}}
+  //Se elimo funcion "NO TOCAR"
+  
+void PARAR(){ 
+  digitalWrite(M1, LOW); digitalWrite(M1R, LOW);
+  digitalWrite(M2, LOW);digitalWrite(M2R, LOW);}
+
+void AVANZAR(){
+  digitalWrite(M1, HIGH); digitalWrite(M1R, LOW);
+  digitalWrite(M2, HIGH); digitalWrite(M2R, LOW);}
+
+void RETROCEDER(){
+   digitalWrite(M1, LOW); digitalWrite(M1R, HIGH);
+   digitalWrite(M2, LOW); digitalWrite(M2R, HIGH);}
+
+void DERECHA(){
+  digitalWrite(M1, HIGH); digitalWrite(M1R, LOW);
+  digitalWrite(M2, LOW);  digitalWrite(M2R, LOW);}
+
+void IZQUIERDA(){
+   digitalWrite(M1, LOW);  digitalWrite(M1R, LOW);
+   digitalWrite(M2, HIGH); digitalWrite(M2R, LOW);}

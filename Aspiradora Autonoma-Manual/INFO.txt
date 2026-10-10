@@ -1,0 +1,3 @@
+Este proyecto consiste en una aspiradora Autonoma y Manual, controlada por medio
+del telefono. En este repositorio se deja tanto la programacion como el codigo
+de la APP realizada en APPinventor al igual que una foto de como se veria el proyecto.
