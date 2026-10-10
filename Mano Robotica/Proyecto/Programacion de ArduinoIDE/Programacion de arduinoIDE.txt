@@ -1,0 +1,190 @@
+#include <Servo.h>
+#include <SoftwareSerial.h>
+
+// Módulo Bluetooth: TX del módulo -> pin 10, RX del módulo -> pin 11
+SoftwareSerial bluetooth(10, 11);
+
+// Un servo por cada dedo
+Servo pulgar;
+Servo indice;
+Servo medio;
+Servo anular;
+Servo menique;
+
+// Posición actual de cada dedo (90 = arriba, 0 = abajo)
+int posPulgar = 90;
+int posIndice = 90;
+int posMedio = 90;
+int posAnular = 90;
+int posMenique = 90;
+
+char letra;
+
+void setup() {
+  Serial.begin(9600);
+  bluetooth.begin(9600);
+
+  pulgar.attach(2);
+  indice.attach(3);
+  medio.attach(4);
+  anular.attach(5);
+  menique.attach(6);
+
+  // Mano abierta al iniciar
+  pulgar.write(90);
+  indice.write(90);
+  medio.write(90);
+  anular.write(90);
+  menique.write(90);
+}
+
+void loop() {
+  if (bluetooth.available()) {
+    letra = bluetooth.read();
+    Serial.println(letra);
+
+    // ----- DEDOS INDIVIDUALES (cada vez que se presiona, sube o baja) -----
+
+    if (letra == 'K') {          // Pulgar
+      if (posPulgar == 90) {
+        pulgar.write(0);
+        posPulgar = 0;
+      } else {
+        pulgar.write(90);
+        posPulgar = 90;
+      }
+    }
+
+    if (letra == 'J') {          // Índice
+      if (posIndice == 90) {
+        indice.write(0);
+        posIndice = 0;
+      } else {
+        indice.write(90);
+        posIndice = 90;
+      }
+    }
+
+    if (letra == 'I') {          // Medio
+      if (posMedio == 90) {
+        medio.write(0);
+        posMedio = 0;
+      } else {
+        medio.write(90);
+        posMedio = 90;
+      }
+    }
+
+    if (letra == 'H') {          // Anular
+      if (posAnular == 90) {
+        anular.write(0);
+        posAnular = 0;
+      } else {
+        anular.write(90);
+        posAnular = 90;
+      }
+    }
+
+    if (letra == 'G') {          // Meñique
+      if (posMenique == 90) {
+        menique.write(0);
+        posMenique = 0;
+      } else {
+        menique.write(90);
+        posMenique = 90;
+      }
+    }
+
+    // ----- FUNCIONES EXTRA -----
+
+    if (letra == 'A') {          // Baja los dedos en orden y luego los sube
+      pulgar.write(0);   delay(300);
+      indice.write(0);   delay(300);
+      medio.write(0);    delay(300);
+      anular.write(0);   delay(300);
+      menique.write(0);  delay(500);
+
+      pulgar.write(90);  delay(300);
+      indice.write(90);  delay(300);
+      medio.write(90);   delay(300);
+      anular.write(90);  delay(300);
+      menique.write(90);
+
+      posPulgar = 90;
+      posIndice = 90;
+      posMedio = 90;
+      posAnular = 90;
+      posMenique = 90;
+    }
+
+    if (letra == 'B') {          // Mano abierta
+      pulgar.write(90);
+      indice.write(90);
+      medio.write(90);
+      anular.write(90);
+      menique.write(90);
+
+      posPulgar = 90;
+      posIndice = 90;
+      posMedio = 90;
+      posAnular = 90;
+      posMenique = 90;
+    }
+
+    if (letra == 'C') {          // Puño cerrado
+      pulgar.write(0);
+      indice.write(0);
+      medio.write(0);
+      anular.write(0);
+      menique.write(0);
+
+      posPulgar = 0;
+      posIndice = 0;
+      posMedio = 0;
+      posAnular = 0;
+      posMenique = 0;
+    }
+
+    if (letra == 'D') {          // Paz y amor (índice y medio arriba)
+      pulgar.write(0);
+      indice.write(90);
+      medio.write(90);
+      anular.write(0);
+      menique.write(0);
+
+      posPulgar = 0;
+      posIndice = 90;
+      posMedio = 90;
+      posAnular = 0;
+      posMenique = 0;
+    }
+
+    if (letra == 'E') {          // Rock (índice y meñique arriba)
+      pulgar.write(0);
+      indice.write(90);
+      medio.write(0);
+      anular.write(0);
+      menique.write(90);
+
+      posPulgar = 0;
+      posIndice = 90;
+      posMedio = 0;
+      posAnular = 0;
+      posMenique = 90;
+    }
+
+    if (letra == 'F') {          // Ola: baja y sube cada dedo uno por uno
+      pulgar.write(0);   delay(200);  pulgar.write(90);   delay(200);
+      indice.write(0);   delay(200);  indice.write(90);   delay(200);
+      medio.write(0);    delay(200);  medio.write(90);    delay(200);
+      anular.write(0);   delay(200);  anular.write(90);   delay(200);
+      menique.write(0);  delay(200);  menique.write(90);  delay(200);
+
+      posPulgar = 90;
+      posIndice = 90;
+      posMedio = 90;
+      posAnular = 90;
+      posMenique = 90;
+    }
+  }
+}
